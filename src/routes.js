@@ -1,9 +1,24 @@
-import { Router } from "express";
+import { Router } from 'express'
+import multer from 'multer'
+import multerConfig from './config/multer'
 
-const routes = new Router();
+import authMiddleware from './app/middlewares/auth'
 
-routes.get("/", (request, response) => {
-  return response.json({ message: "Hello World" });
-});
+import UserController from './app/controllers/UserController'
+import SessionController from './app/controllers/SessionController'
+import ProductController from './app/controllers/ProductController'
 
-export default routes;
+const upload = multer(multerConfig)
+
+const routes = new Router()
+
+routes.post('/users', UserController.store)
+
+routes.post('/sessions', SessionController.store)
+
+routes.use(authMiddleware) // Será chamado por todas rotas abaixo
+
+routes.post('/products', upload.single('file'), ProductController.store)
+routes.get('/products', ProductController.index)
+
+export default routes
