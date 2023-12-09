@@ -10,10 +10,14 @@ class SessionController {
       password: Yup.string().required(),
     })
 
-    if (!(await schema.isValid(request.body))) {
+    function returnSessionError() {
       return response
         .status(401)
         .json({ error: 'Email or Password are Incorrect' })
+    }
+
+    if (!(await schema.isValid(request.body))) {
+      return returnSessionError()
     }
 
     const { email, password } = request.body
@@ -23,15 +27,11 @@ class SessionController {
     })
 
     if (!user) {
-      return response
-        .status(401)
-        .json({ error: 'Email or Password are Incorrect' })
+      return returnSessionError()
     }
 
     if (!(await user.checkPassword(password))) {
-      return response
-        .status(401)
-        .json({ error: 'Email or Password are Incorrect' })
+      return returnSessionError()
     }
 
     return response.json({
