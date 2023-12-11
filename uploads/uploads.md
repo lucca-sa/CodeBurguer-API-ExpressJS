@@ -1,1 +1,1 @@
-- Where file uploads stay
+- File uploads location
